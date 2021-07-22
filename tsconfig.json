@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {                        
+    "target": "es5",                               
+    "module": "es6",                           
+    "outDir": "./dist",                             
+    "rootDir": "./src",                             
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,                    
+  },
+  "exclude":[
+    "./node_modules"
+  ]
+}
