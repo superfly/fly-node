@@ -1,4 +1,4 @@
-
+import { env } from 'process'
 import express from 'express'
 const app = express()
 const port = 3500
@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/', (req, res) => {
-  const content = 'Posted';
+  const content = `Posted in region ${env.FLY_REGION}`;
   res.send(content);
 })
 
