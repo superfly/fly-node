@@ -16,19 +16,24 @@ Finally, set the `PRIMARY_REGION` environment variable in your app `fly.toml` to
 
 ## Configuration
 
-Insert the middleware as high as possible in the stack, before your controllers.
+Insert the request handler middleware as high as possible in the stack, before your controllers, and the error handler after them.
 
 ```
 import express from "express"
-import * as Fly from "@fly/node"
+import { requestHandler, errorHandler } from "@fly/node"
 
 const app = express()
 
-app.use(Fly.requestHandler)
+app.use(requestHandler)
 
 app.get("/", function rootHandler(req, res) {
   res.end("Root!");
 });
 
+app.use(errorHandler)
+
 ````
 
+## TODO
+
+* Mention that Express users with async route handlers will need to wrap them to correctly capture exceptions
