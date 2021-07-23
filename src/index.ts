@@ -1,11 +1,11 @@
 import { env } from 'process'
-import { RequestHandler, Response } from 'express'
+import { RequestHandler, ErrorRequestHandler, Response } from 'express'
 
 function inSecondaryRegion() {
   return env.FLY_REGION && env.PRIMARY_REGION && env.FLY_REGION !== env.PRIMARY_REGION 
 }
 
-const replayInPrimaryRegion = (response: Response, http_method: String) => {
+function replayInPrimaryRegion(response: Response, http_method: String) {
   response.append('Fly-Replay', `region=${env.PRIMARY_REGION}; state=${http_method}`)
   response.status(409).send(`Replaying in ${env.PRIMARY_REGION}`)
 }
@@ -22,4 +22,12 @@ export const requestHandler: RequestHandler = (req, res, next) => {
   }
 
   next()
+}
+
+export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
+  if (error.toString().includes('SqlState("25006")') && inSecondaryRegion()) {
+    replayInPrimaryRegion(res, "captured_write")
+  } else {
+    next(error)
+  }
 }

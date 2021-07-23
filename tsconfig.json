@@ -1,12 +1,15 @@
 {
   "compilerOptions": {                        
-    "target": "es5",                               
-    "module": "es6",                           
-    "outDir": "./dist",                             
-    "rootDir": "./src",                             
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "./dist",                      
+    "rootDir": "./src",
     "strict": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true,                    
+    "lib": [
+      "es2016",
+      "esnext.asynciterable"
+    ],
+    "moduleResolution": "node"
   },
   "exclude":[
     "./node_modules"

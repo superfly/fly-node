@@ -1,0 +1,9 @@
+html
+  head
+  body
+    form(method='POST')
+      input(type='submit' value='Write')
+    
+    ul
+      each user in users
+        li= user.name
