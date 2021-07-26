@@ -25,6 +25,9 @@ export const requestHandler: RequestHandler = (req, res, next) => {
 }
 
 export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
+  /* Prisma throws low-level errors as strings, and this is the only error we care about
+     until we decide to support other database adapters
+  */
   if (error.toString().includes('SqlState("25006")') && inSecondaryRegion()) {
     replayInPrimaryRegion(res, "captured_write")
   } else {

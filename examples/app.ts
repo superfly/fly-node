@@ -4,6 +4,8 @@ import { Request, Response, NextFunction, RequestHandler } from 'express'
 import { requestHandler, errorHandler } from "../src"
 
 import { PrismaClient } from "@prisma/client"
+import { create } from "domain"
+import { createSecureServer } from "http2"
 const prisma = new PrismaClient()
 
 const app = express()
@@ -22,24 +24,36 @@ const asyncWrap = (routeHandler: RequestHandler) => (req: Request, res: Response
 		.catch(err => next(err))
 
 
-const root = async (req: Request, res: Response) => {
-  const users = await prisma.user.findMany()
-  res.render('index', { users })  
-}
-
-const post = async (req: Request, res: Response) => {
+async function createUser() {
   const random = Math.round(Math.random() * 100)
+
   await prisma.user.create({
     data: {
       email: `someemail${random}@example.com`,
       name: `Fer${random}`
     }
   })
+}
+
+const root = async (req: Request, res: Response) => {
+  const users = await prisma.user.findMany()
+  res.render('index', { users })  
+}
+
+const writeGet = async (req: Request, res: Response) => {
+  await createUser()
   const content = `Posted in region ${env.FLY_REGION}`
-  res.send(content);
+  res.send(content)
+}
+
+const post = async (req: Request, res: Response) => {
+  await createUser()
+  const content = `Posted in region ${env.FLY_REGION}`
+  res.send(content)
 }
 
 app.get("/", asyncWrap(root))
+app.get("/write_get", asyncWrap(writeGet))
 app.post("/", asyncWrap(post))
 
 app.use(errorHandler)
