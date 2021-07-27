@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.errorHandler = exports.requestHandler = void 0;
+exports.errorHandler = exports.requestHandler = exports.regionalDatabaseUrl = void 0;
 const process_1 = require("process");
+var config_1 = require("./config");
+Object.defineProperty(exports, "regionalDatabaseUrl", { enumerable: true, get: function () { return config_1.regionalDatabaseUrl; } });
 var RequestReplayTypes;
 (function (RequestReplayTypes) {
     RequestReplayTypes["CapturedWrite"] = "captured_write";

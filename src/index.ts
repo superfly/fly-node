@@ -1,5 +1,6 @@
 import { env } from 'process'
 import { RequestHandler, ErrorRequestHandler, Response } from 'express'
+export { regionalDatabaseUrl } from './config'
 
 enum RequestReplayTypes {
   CapturedWrite = 'captured_write',
