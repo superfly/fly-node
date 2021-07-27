@@ -3,11 +3,9 @@
   "version": "0.0.1",
   "description": "Node.js middleware and helpers for deployments on Fly.io",
   "main": "dist/index.js",
-  
   "scripts": {
     "test": "jest",
-    "build: "tsc",
-    "start": "ts-node examples/app.ts"
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
