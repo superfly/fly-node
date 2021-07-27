@@ -13,11 +13,12 @@ var RequestReplayTypes;
 function inSecondaryRegion() {
     return process_1.env.FLY_REGION && process_1.env.PRIMARY_REGION && process_1.env.FLY_REGION !== process_1.env.PRIMARY_REGION;
 }
-function replayInPrimaryRegion(response, http_method) {
-    response.append('Fly-Replay', `region=${process_1.env.PRIMARY_REGION}; state=${http_method}`);
+function replayInPrimaryRegion(response, state) {
+    response.append('Fly-Replay', `region=${process_1.env.PRIMARY_REGION}; state=${state}`);
     response.status(409).send(`Replaying in ${process_1.env.PRIMARY_REGION}`);
 }
 const requestHandler = (req, res, next) => {
+    var _a;
     const replayableHttpMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
     if (process_1.env.FLY_REGION) {
         res.append('Fly-Region', process_1.env.FLY_REGION);
@@ -26,14 +27,13 @@ const requestHandler = (req, res, next) => {
         if (replayableHttpMethods.includes(req.method)) {
             return replayInPrimaryRegion(res, RequestReplayTypes.HttpMethod);
         }
-        console.log(req.cookies);
-        if ((req === null || req === void 0 ? void 0 : req.cookies['fly-replay-threshold']) && parseInt(req.cookies['fly-replay-threshold']) - Date.now() > 0) {
+        if (req.cookies && req.cookies['fly-replay-threshold'] && parseInt(req.cookies['fly-replay-threshold']) - Date.now() > 0) {
             return replayInPrimaryRegion(res, RequestReplayTypes.Threshold);
         }
     }
-    if (req.headers['Fly-Replay-Src']) {
-        let matches = req.headers['Fly-Replay-Src'].toString().matchAll(/(.*?)=(.*?)($|;)/);
-        if (Array.from(matches).some(match => match.toString() == 'threshold')) {
+    if (req.header('Fly-Replay-Src')) {
+        let matches = (_a = req.header('Fly-Replay-Src')) === null || _a === void 0 ? void 0 : _a.toString().matchAll(/(.*?)=(.*?)($|;)/g);
+        if (matches && !Array.from(matches).some(match => match.toString() == 'threshold')) {
             let threshold = Date.now() + (60 * 5);
             res.cookie("fly-replay-threshold", threshold);
         }
