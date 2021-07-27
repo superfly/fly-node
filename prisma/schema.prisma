@@ -8,7 +8,7 @@ generator typegraphql {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://postgres:postgres@localhost:5434/fly_node"
+  url      = env("DATABASE_URL")
 }
 
 model user {

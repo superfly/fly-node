@@ -1,12 +1,22 @@
 import { env } from "process"
 import * as express from "express"
 import { Request, Response, NextFunction, RequestHandler } from 'express'
+import cookieParser = require('cookie-parser')
+
 import { requestHandler, errorHandler } from "../src"
+import { regionalDatabaseUrl } from "../src/config"
 
 import { PrismaClient } from "@prisma/client"
 import { create } from "domain"
 import { createSecureServer } from "http2"
-const prisma = new PrismaClient()
+
+const prisma = new PrismaClient({
+    datasources: {
+    db: {
+      url: regionalDatabaseUrl()
+    },
+  },
+})
 
 const app = express()
 const port = 3500
@@ -14,6 +24,7 @@ const port = 3500
 app.set('view engine', 'pug')
 app.set('views', './examples/views')
 
+app.use(cookieParser())
 app.use(requestHandler)
 
 // Hack to enable error handling in async handlers
